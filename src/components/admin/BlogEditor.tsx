@@ -166,51 +166,39 @@ export function BlogEditor({ initialData, onSave, isLoading }: BlogEditorProps) 
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Cover Image *</label>
-            <div className="flex gap-2">
-              <Input
-                value={coverImage}
-                onChange={e => setCoverImage(e.target.value)}
-                placeholder="https://example.com/image.jpg or upload"
-                className="admin-input flex-1"
-                required
-              />
-              <input
-                ref={coverImageInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleCoverImageUpload}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => coverImageInputRef.current?.click()}
-                disabled={isUploading}
-              >
-                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              </Button>
-            </div>
-            {coverImage && (
-              <img
-                src={coverImage}
-                alt="Cover preview"
-                className="mt-2 rounded-lg h-32 w-full object-cover"
-              />
-            )}
-          </div>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Author Name</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Cover Image *</label>
+          <div className="flex gap-2">
             <Input
-              value={author}
-              onChange={e => setAuthor(e.target.value)}
-              placeholder="Author name"
-              className="admin-input"
+              value={coverImage}
+              onChange={e => setCoverImage(e.target.value)}
+              placeholder="https://example.com/image.jpg or upload"
+              className="admin-input flex-1"
+              required
             />
+            <input
+              ref={coverImageInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleCoverImageUpload}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => coverImageInputRef.current?.click()}
+              disabled={isUploading}
+            >
+              {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            </Button>
           </div>
+          {coverImage && (
+            <img
+              src={coverImage}
+              alt="Cover preview"
+              className="mt-2 rounded-lg h-32 w-full object-cover"
+            />
+          )}
         </div>
       </div>
 
