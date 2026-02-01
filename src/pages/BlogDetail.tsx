@@ -24,13 +24,13 @@ export default function BlogDetail() {
         <BlogHeader />
         <main className="container mx-auto px-4 py-24 text-center">
           <h1 className="font-serif text-3xl font-bold text-foreground mb-4">
-            Article Not Found
+            Post Not Found
           </h1>
           <p className="text-muted-foreground mb-8">
-            The article you're looking for doesn't exist or has been removed.
+            The post you're looking for doesn't exist or has been removed.
           </p>
           <Link to="/blogs" className="blog-link text-lg">
-            ← Back to all articles
+            ← Back to all posts
           </Link>
         </main>
         <BlogFooter />
@@ -62,7 +62,7 @@ export default function BlogDetail() {
                   className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Back to articles
+                  Back to posts
                 </Link>
                 
                 <p className="blog-meta mb-4">

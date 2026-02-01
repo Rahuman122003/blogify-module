@@ -33,7 +33,7 @@ export default function AdminEditBlog() {
       <div className="fade-in">
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-bold text-foreground">Edit Post</h1>
-          <p className="text-muted-foreground mt-1">Update your blog article</p>
+          <p className="text-muted-foreground mt-1">Update your blog post</p>
         </div>
         <BlogEditor initialData={blog} onSave={handleSave} />
       </div>
