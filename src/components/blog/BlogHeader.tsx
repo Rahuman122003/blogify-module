@@ -1,53 +1,63 @@
 import { Link } from 'react-router-dom';
-import { Search, ArrowUpRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function BlogHeader() {
   return (
-    <header className="bg-blog-header text-blog-header-foreground sticky top-0 z-50">
+    <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/blogs" className="flex items-center">
-          <span className="font-serif text-xl font-bold text-blog-header-foreground italic">
-            Blog Spot.
-          </span>
+        <Link to="/blogs" className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-red-500 rounded-lg flex items-center justify-center">
+            <div className="w-4 h-4 bg-white rounded-sm" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-semibold text-foreground text-lg leading-tight">
+              <span className="text-primary">Probiz</span> Connect
+            </span>
+            <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
+              Digitise. Automate. Optimise
+            </span>
+          </div>
         </Link>
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link 
-            to="/blogs"
-            className="text-sm text-blog-header-foreground/80 hover:text-blog-header-foreground transition-colors"
+            to="/"
+            className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors"
           >
-            Articles
+            Home
           </Link>
           <Link 
-            to="/blogs"
-            className="text-sm text-blog-header-foreground/80 hover:text-blog-header-foreground transition-colors"
+            to="/about"
+            className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
           >
-            Be a writer
+            About
+          </Link>
+          <button className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors flex items-center gap-1">
+            Solutions <ChevronDown className="w-4 h-4" />
+          </button>
+          <Link 
+            to="/blogs"
+            className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
+          >
+            Blogs
           </Link>
           <Link 
-            to="/admin"
-            className="text-sm text-blog-header-foreground/80 hover:text-blog-header-foreground transition-colors underline underline-offset-2"
+            to="/contact"
+            className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
           >
-            Admin
+            Contact
           </Link>
         </nav>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-full bg-blog-header-foreground/10 flex items-center justify-center hover:bg-blog-header-foreground/20 transition-colors">
-            <Search className="w-4 h-4 text-blog-header-foreground" />
-          </button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="rounded-full border-blog-header-foreground/30 text-blog-header-foreground bg-transparent hover:bg-blog-header-foreground/10"
-          >
-            Menu
-          </Button>
-        </div>
+        {/* CTA Button */}
+        <Button 
+          className="rounded-full bg-gray-900 text-white hover:bg-gray-800 px-6"
+        >
+          Book a Demo
+        </Button>
       </div>
     </header>
   );

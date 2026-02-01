@@ -2,7 +2,7 @@ import { useBlog } from '@/contexts/BlogContext';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogHeader } from '@/components/blog/BlogHeader';
 import { BlogFooter } from '@/components/blog/BlogFooter';
-import { ArrowRight } from 'lucide-react';
+
 
 export default function BlogList() {
   const { getPublishedBlogs } = useBlog();
@@ -16,17 +16,9 @@ export default function BlogList() {
       <main className="container mx-auto px-6 py-16">
         {/* Page Title */}
         <div className="text-center mb-16 fade-in">
-          <div className="flex items-center justify-center gap-4">
-            <h1 className="font-serif text-5xl md:text-6xl font-medium text-foreground">
-              <span className="italic">All</span> Posts
-            </h1>
-            <a 
-              href="#latest" 
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 mt-2"
-            >
-              See new posts <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
+          <h1 className="font-serif text-5xl md:text-6xl font-medium text-foreground">
+            <span className="italic">All</span> Posts
+          </h1>
         </div>
 
         {/* Featured Grid - 3 columns masonry style */}
