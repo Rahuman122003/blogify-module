@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function BlogHeader() {
@@ -24,40 +23,21 @@ export function BlogHeader() {
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link 
-            to="/"
-            className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors"
-          >
-            Home
-          </Link>
-          <Link 
-            to="/about"
-            className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
-          >
-            About
-          </Link>
-          <button className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors flex items-center gap-1">
-            Solutions <ChevronDown className="w-4 h-4" />
-          </button>
-          <Link 
             to="/blogs"
             className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
           >
             Blogs
           </Link>
-          <Link 
-            to="/contact"
-            className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
-          >
-            Contact
-          </Link>
         </nav>
 
-        {/* CTA Button */}
-        <Button 
-          className="rounded-full bg-gray-900 text-white hover:bg-gray-800 px-6"
-        >
-          Book a Demo
-        </Button>
+        {/* Admin Button */}
+        <Link to="/admin">
+          <Button 
+            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-6"
+          >
+            Admin
+          </Button>
+        </Link>
       </div>
     </header>
   );
