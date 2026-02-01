@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useBlog } from '@/contexts/BlogContext';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { format } from 'date-fns';
-import { Edit, Trash2, Eye, EyeOff, PlusCircle } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, PlusCircle, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -37,12 +37,20 @@ export default function AdminDashboard() {
             <h1 className="font-serif text-3xl font-bold text-foreground">Dashboard</h1>
             <p className="text-muted-foreground mt-1">Manage your blog posts</p>
           </div>
-          <Link to="/admin/blogs/new">
-            <Button className="admin-button">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              New Post
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/blogs">
+              <Button variant="outline" className="admin-button-secondary">
+                <Home className="w-4 h-4 mr-2" />
+                Blog Home
+              </Button>
+            </Link>
+            <Link to="/admin/blogs/new">
+              <Button className="admin-button">
+                <PlusCircle className="w-4 h-4 mr-2" />
+                New Post
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}

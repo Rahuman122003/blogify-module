@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Lock, Mail, AlertCircle } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowLeft } from 'lucide-react';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -27,6 +27,14 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        <button
+          onClick={() => navigate('/blogs')}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 fade-in"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Blogs
+        </button>
+        
         <div className="text-center mb-8 fade-in">
           <h1 className="font-serif text-3xl font-bold text-foreground mb-2">
             Blog Admin
