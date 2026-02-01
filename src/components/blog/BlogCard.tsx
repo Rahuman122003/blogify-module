@@ -96,6 +96,15 @@ export function BlogCard({ blog, featured = false, size = 'medium' }: BlogCardPr
             alt={blog.title}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
+          {/* Overlay badges */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <span className="bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-full">
+              {format(new Date(blog.createdAt), 'MMM d, yyyy')}
+            </span>
+            <span className="bg-foreground text-white text-xs font-medium px-3 py-1.5 rounded-full">
+              • {category}
+            </span>
+          </div>
           {/* Arrow button */}
           <div className="absolute top-4 right-4">
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-foreground group-hover:text-white transition-colors">
@@ -105,9 +114,6 @@ export function BlogCard({ blog, featured = false, size = 'medium' }: BlogCardPr
         </div>
       </div>
       <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">
-          • {category}
-        </p>
         <h3 className="font-serif text-xl font-medium text-foreground leading-tight group-hover:text-primary transition-colors line-clamp-2">
           {blog.title}
         </h3>
