@@ -67,7 +67,7 @@ export default function BlogList() {
         {/* Empty State */}
         {blogs.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-xl text-muted-foreground">No articles published yet.</p>
+            <p className="text-xl text-muted-foreground">No posts published yet.</p>
             <p className="text-muted-foreground mt-2">Check back soon!</p>
           </div>
         )}

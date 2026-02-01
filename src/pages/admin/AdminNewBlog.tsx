@@ -19,7 +19,7 @@ export default function AdminNewBlog() {
       <div className="fade-in">
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-bold text-foreground">Create New Post</h1>
-          <p className="text-muted-foreground mt-1">Write and publish a new blog article</p>
+          <p className="text-muted-foreground mt-1">Write and publish a new blog post</p>
         </div>
         <BlogEditor onSave={handleSave} />
       </div>

@@ -10,7 +10,7 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ blog, featured = false, size = 'medium' }: BlogCardProps) {
-  const category = 'Article'; // Default category
+  const category = 'Blog'; // Default category
 
   if (featured) {
     return (
