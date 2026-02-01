@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { BlogContent, BlogContentType, BlogPost } from '@/types/blog';
-import { Plus, Trash2, GripVertical, Image, Type, Heading2, Heading3 } from 'lucide-react';
+import { Plus, Trash2, GripVertical, Image, Type, Heading2, Heading3, Upload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,6 +28,8 @@ interface BlogEditorProps {
 }
 
 export function BlogEditor({ initialData, onSave, isLoading }: BlogEditorProps) {
+  const { uploadImage, isUploading } = useImageUpload();
+  const coverImageInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState(initialData?.title || '');
   const [slug, setSlug] = useState(initialData?.slug || '');
   const [description, setDescription] = useState(initialData?.description || '');
@@ -34,6 +37,23 @@ export function BlogEditor({ initialData, onSave, isLoading }: BlogEditorProps) 
   const [author, setAuthor] = useState(initialData?.author || '');
   const [content, setContent] = useState<BlogContent[]>(initialData?.content || []);
   const [published, setPublished] = useState(initialData?.published || false);
+
+  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = await uploadImage(file);
+      if (url) {
+        setCoverImage(url);
+      }
+    }
+  };
+
+  const handleContentImageUpload = async (blockId: string, file: File) => {
+    const url = await uploadImage(file);
+    if (url) {
+      updateContentBlock(blockId, { content: url });
+    }
+  };
 
   const generateSlug = useCallback((text: string) => {
     return text
@@ -148,14 +168,31 @@ export function BlogEditor({ initialData, onSave, isLoading }: BlogEditorProps) 
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Cover Image URL *</label>
-            <Input
-              value={coverImage}
-              onChange={e => setCoverImage(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              className="admin-input"
-              required
-            />
+            <label className="text-sm font-medium text-foreground">Cover Image *</label>
+            <div className="flex gap-2">
+              <Input
+                value={coverImage}
+                onChange={e => setCoverImage(e.target.value)}
+                placeholder="https://example.com/image.jpg or upload"
+                className="admin-input flex-1"
+                required
+              />
+              <input
+                ref={coverImageInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleCoverImageUpload}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => coverImageInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+              </Button>
+            </div>
             {coverImage && (
               <img
                 src={coverImage}
@@ -258,12 +295,35 @@ export function BlogEditor({ initialData, onSave, isLoading }: BlogEditorProps) 
                   />
                 ) : block.type === 'image' ? (
                   <div className="space-y-2">
-                    <Input
-                      value={block.content}
-                      onChange={e => updateContentBlock(block.id, { content: e.target.value })}
-                      placeholder="Image URL"
-                      className="admin-input"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        value={block.content}
+                        onChange={e => updateContentBlock(block.id, { content: e.target.value })}
+                        placeholder="Image URL or upload"
+                        className="admin-input flex-1"
+                      />
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleContentImageUpload(block.id, file);
+                          }}
+                          className="hidden"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          asChild
+                          disabled={isUploading}
+                        >
+                          <span>
+                            {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                          </span>
+                        </Button>
+                      </label>
+                    </div>
                     <Input
                       value={block.alt || ''}
                       onChange={e => updateContentBlock(block.id, { alt: e.target.value })}
