@@ -61,6 +61,8 @@ export default {
           "code-bg": "hsl(var(--blog-code-bg))",
           "quote-border": "hsl(var(--blog-quote-border))",
           "image-overlay": "hsl(var(--blog-image-overlay))",
+          header: "hsl(var(--blog-header))",
+          "header-foreground": "hsl(var(--blog-header-foreground))",
         },
         admin: {
           sidebar: "hsl(var(--admin-sidebar))",
