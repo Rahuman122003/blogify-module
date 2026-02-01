@@ -37,7 +37,7 @@ export default function AdminLogin() {
         
         <div className="text-center mb-8 fade-in">
           <h1 className="font-serif text-3xl font-bold text-foreground mb-2">
-            Blog Admin
+            Probiz Blog Admin
           </h1>
           <p className="text-muted-foreground">
             Sign in to manage your blog content
