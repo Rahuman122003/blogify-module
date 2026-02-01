@@ -1,75 +1,116 @@
 import { Link } from 'react-router-dom';
 import { BlogPost } from '@/types/blog';
 import { format } from 'date-fns';
+import { ArrowUpRight } from 'lucide-react';
 
 interface BlogCardProps {
   blog: BlogPost;
   featured?: boolean;
+  size?: 'small' | 'medium' | 'large';
 }
 
-export function BlogCard({ blog, featured = false }: BlogCardProps) {
+export function BlogCard({ blog, featured = false, size = 'medium' }: BlogCardProps) {
+  const category = 'Article'; // Default category
+
   if (featured) {
     return (
       <Link 
         to={`/blogs/${blog.slug}`}
-        className="group block blog-card fade-in"
+        className="group block relative overflow-hidden rounded-3xl"
       >
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="overflow-hidden rounded-lg">
-            <img
-              src={blog.coverImage}
-              alt={blog.title}
-              className="blog-card-image h-64 md:h-80"
-            />
+        <div className="relative aspect-[4/5] md:aspect-[3/4]">
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          {/* Overlay badges */}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <span className="bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-full">
+              {format(new Date(blog.createdAt), 'MMM d, yyyy')}
+            </span>
+            <span className="bg-foreground text-white text-xs font-medium px-3 py-1.5 rounded-full">
+              • {category}
+            </span>
           </div>
-          <div className="flex flex-col justify-center p-4 md:p-6">
-            <p className="blog-meta mb-3">
-              {format(new Date(blog.createdAt), 'MMMM d, yyyy')} • {blog.readingTime}
-            </p>
-            <h2 className="blog-heading text-2xl md:text-3xl mb-4 group-hover:text-primary transition-colors">
-              {blog.title}
-            </h2>
-            <p className="blog-body text-lg mb-4 line-clamp-3">
-              {blog.description}
-            </p>
-            {blog.author && (
-              <p className="text-sm text-muted-foreground">
-                By <span className="font-medium text-foreground">{blog.author}</span>
-              </p>
-            )}
+          {/* Arrow button */}
+          <div className="absolute top-4 right-4">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-foreground group-hover:text-white transition-colors">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
           </div>
         </div>
       </Link>
     );
   }
 
+  if (size === 'large') {
+    return (
+      <div className="group flex flex-col md:flex-row gap-6 items-center">
+        <Link 
+          to={`/blogs/${blog.slug}`}
+          className="relative overflow-hidden rounded-3xl flex-1"
+        >
+          <div className="relative aspect-[4/5]">
+            <img
+              src={blog.coverImage}
+              alt={blog.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            {/* Overlay badges */}
+            <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <span className="bg-white text-foreground text-xs font-medium px-3 py-1.5 rounded-full">
+                {format(new Date(blog.createdAt), 'MMM d, yyyy')}
+              </span>
+              <span className="bg-foreground text-white text-xs font-medium px-3 py-1.5 rounded-full">
+                • {category}
+              </span>
+            </div>
+          </div>
+        </Link>
+        <div className="flex-1 space-y-4">
+          <Link to={`/blogs/${blog.slug}`}>
+            <h2 className="font-serif text-3xl md:text-4xl font-medium text-foreground leading-tight group-hover:text-primary transition-colors">
+              {blog.title}
+            </h2>
+          </Link>
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-white group-hover:bg-primary transition-colors cursor-pointer">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Link 
       to={`/blogs/${blog.slug}`}
-      className="group block blog-card fade-in"
+      className="group block"
     >
-      <div className="overflow-hidden rounded-t-lg">
-        <img
-          src={blog.coverImage}
-          alt={blog.title}
-          className="blog-card-image h-48"
-        />
+      <div className="relative overflow-hidden rounded-3xl mb-4">
+        <div className="relative aspect-[4/5]">
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          {/* Arrow button */}
+          <div className="absolute top-4 right-4">
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-foreground group-hover:text-white transition-colors">
+              <ArrowUpRight className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="p-5">
-        <p className="blog-meta mb-2">
-          {format(new Date(blog.createdAt), 'MMM d, yyyy')} • {blog.readingTime}
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">
+          • {category}
         </p>
-        <h3 className="blog-heading text-xl mb-2 group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="font-serif text-xl font-medium text-foreground leading-tight group-hover:text-primary transition-colors line-clamp-2">
           {blog.title}
         </h3>
-        <p className="blog-body text-base line-clamp-2 mb-3">
-          {blog.description}
-        </p>
-        {blog.author && (
-          <p className="text-sm text-muted-foreground">
-            {blog.author}
-          </p>
-        )}
       </div>
     </Link>
   );

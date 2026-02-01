@@ -2,48 +2,69 @@ import { useBlog } from '@/contexts/BlogContext';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { BlogHeader } from '@/components/blog/BlogHeader';
 import { BlogFooter } from '@/components/blog/BlogFooter';
+import { ArrowRight } from 'lucide-react';
 
 export default function BlogList() {
   const { getPublishedBlogs } = useBlog();
   const blogs = getPublishedBlogs();
-  const [featuredBlog, ...restBlogs] = blogs;
+  const [firstBlog, secondBlog, thirdBlog, ...restBlogs] = blogs;
 
   return (
     <div className="min-h-screen bg-background">
       <BlogHeader />
       
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-6 py-16">
         {/* Page Title */}
-        <div className="text-center mb-12 fade-in">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Latest Articles
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Thoughtful insights on design, technology, and living intentionally.
-          </p>
+        <div className="text-center mb-16 fade-in">
+          <div className="flex items-center justify-center gap-4">
+            <h1 className="font-serif text-5xl md:text-6xl font-medium text-foreground">
+              <span className="italic">All</span> Posts
+            </h1>
+            <a 
+              href="#latest" 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 mt-2"
+            >
+              See new posts <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
         </div>
 
-        {/* Featured Post */}
-        {featuredBlog && (
-          <section className="mb-16">
-            <BlogCard blog={featuredBlog} featured />
+        {/* Featured Grid - 3 columns masonry style */}
+        {blogs.length > 0 && (
+          <section id="latest" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            {/* Left column - tall card */}
+            {firstBlog && (
+              <div className="fade-in">
+                <BlogCard blog={firstBlog} />
+              </div>
+            )}
+
+            {/* Middle column - featured large card */}
+            {secondBlog && (
+              <div className="fade-in" style={{ animationDelay: '100ms' }}>
+                <BlogCard blog={secondBlog} featured />
+              </div>
+            )}
+
+            {/* Right column - card with title beside */}
+            {thirdBlog && (
+              <div className="fade-in" style={{ animationDelay: '200ms' }}>
+                <BlogCard blog={thirdBlog} size="large" />
+              </div>
+            )}
           </section>
         )}
 
-        {/* Divider */}
-        {restBlogs.length > 0 && (
-          <div className="border-t border-blog-divider my-12" />
-        )}
-
-        {/* Blog Grid */}
+        {/* More Stories Grid */}
         {restBlogs.length > 0 && (
           <section>
-            <h2 className="font-serif text-2xl font-semibold text-foreground mb-8">
-              More Stories
-            </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {restBlogs.map((blog, index) => (
-                <div key={blog.id} style={{ animationDelay: `${index * 100}ms` }}>
+                <div 
+                  key={blog.id} 
+                  className="fade-in"
+                  style={{ animationDelay: `${(index + 3) * 100}ms` }}
+                >
                   <BlogCard blog={blog} />
                 </div>
               ))}
