@@ -28,7 +28,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <aside className="w-64 bg-admin-sidebar border-r border-border flex flex-col">
         <div className="p-6 border-b border-border">
           <Link to="/admin/dashboard" className="font-serif text-xl font-bold text-foreground">
-            Blog Admin
+            Admin
           </Link>
         </div>
         

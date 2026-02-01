@@ -13,12 +13,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Mock admin credentials (will be replaced with real auth)
 const MOCK_ADMIN = {
-  email: 'admin@blog.com',
-  password: 'admin123',
+  email: 'probizconnect@blog.io',
+  password: 'Probiz@blog123',
   user: {
     id: '1',
-    email: 'admin@blog.com',
-    name: 'Admin User'
+    email: 'probizconnect@blog.io',
+    name: 'Probiz Connect Admin'
   }
 };
 

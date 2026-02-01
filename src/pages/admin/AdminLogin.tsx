@@ -61,7 +61,7 @@ export default function AdminLogin() {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="admin@blog.com"
+                  placeholder="Enter Email Address"
                   className="pl-10 admin-input"
                   required
                 />
@@ -76,7 +76,7 @@ export default function AdminLogin() {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Enter Password"
                   className="pl-10 admin-input"
                   required
                 />
@@ -93,9 +93,6 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-border">
-            <p className="text-xs text-center text-muted-foreground">
-              Demo credentials: admin@blog.com / admin123
-            </p>
           </div>
         </div>
       </div>
