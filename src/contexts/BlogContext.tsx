@@ -1,109 +1,259 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { BlogPost, BlogContent } from '@/types/blog';
-import { mockBlogs } from '@/data/mockBlogs';
+import React, { createContext, useContext, useCallback } from "react";
+import { supabase } from "@/lib/supabase";
+import { BlogPost, BlogContent } from "@/types/blog";
+
+/* ================================
+   DB TYPES (Supabase Row Types)
+================================ */
+
+interface DBBlogContent {
+  id: string;
+  blog_id: string;
+  type: "paragraph" | "heading2" | "heading3" | "image";
+  content: string;
+  alt: string | null;
+  position: number;
+}
+
+interface DBBlog {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  cover_image: string | null;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  blog_content?: DBBlogContent[];
+}
+
+/* ================================
+   CONTEXT TYPES
+================================ */
 
 interface BlogContextType {
-  blogs: BlogPost[];
-  getPublishedBlogs: () => BlogPost[];
-  getAllBlogs: () => BlogPost[];
-  getBlogBySlug: (slug: string) => BlogPost | undefined;
-  getBlogById: (id: string) => BlogPost | undefined;
-  createBlog: (blog: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>) => BlogPost;
-  updateBlog: (id: string, updates: Partial<BlogPost>) => BlogPost | undefined;
-  deleteBlog: (id: string) => boolean;
-  togglePublish: (id: string) => BlogPost | undefined;
+  getPublishedBlogs: () => Promise<BlogPost[]>;
+  getAllBlogs: () => Promise<BlogPost[]>;
+  getBlogBySlug: (slug: string) => Promise<BlogPost | null>;
+  getBlogById: (id: string) => Promise<BlogPost | null>;
+  createBlog: (blog: BlogPost) => Promise<BlogPost>;
+  updateBlog: (id: string, blog: Partial<BlogPost>) => Promise<void>;
+  deleteBlog: (id: string) => Promise<void>;
+  togglePublish: (id: string, value: boolean) => Promise<void>;
 }
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
 
+/* ================================
+   MAP DB → APP TYPE
+================================ */
+
+const mapBlog = (row: DBBlog): BlogPost => ({
+  id: row.id,
+  title: row.title,
+  slug: row.slug,
+  description: row.description ?? "",
+  coverImage: row.cover_image ?? "",
+  published: row.published,
+  createdAt: new Date(row.created_at),
+  updatedAt: new Date(row.updated_at),
+
+  content: (row.blog_content ?? [])
+    .sort((a, b) => a.position - b.position)
+    .map((c) => ({
+      id: c.id,
+      type: c.type,
+      content: c.content,
+      alt: c.alt ?? "",
+    })),
+});
+
+/* ================================
+   PROVIDER
+================================ */
+
 export function BlogProvider({ children }: { children: React.ReactNode }) {
-  const [blogs, setBlogs] = useState<BlogPost[]>(mockBlogs);
+  /* ================================
+     FETCH PUBLISHED BLOGS
+  ================================ */
+  const getPublishedBlogs = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("*, blog_content(*)")
+      .eq("published", true)
+      .order("created_at", { ascending: false });
 
-  const getPublishedBlogs = useCallback(() => {
-    return blogs.filter(blog => blog.published).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [blogs]);
-
-  const getAllBlogs = useCallback(() => {
-    return [...blogs].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [blogs]);
-
-  const getBlogBySlug = useCallback((slug: string) => {
-    return blogs.find(blog => blog.slug === slug);
-  }, [blogs]);
-
-  const getBlogById = useCallback((id: string) => {
-    return blogs.find(blog => blog.id === id);
-  }, [blogs]);
-
-  const createBlog = useCallback((blogData: Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newBlog: BlogPost = {
-      ...blogData,
-      id: Date.now().toString(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setBlogs(prev => [newBlog, ...prev]);
-    return newBlog;
+    if (error) throw error;
+    return (data ?? []).map(mapBlog);
   }, []);
 
-  const updateBlog = useCallback((id: string, updates: Partial<BlogPost>) => {
-    let updatedBlog: BlogPost | undefined;
-    setBlogs(prev => prev.map(blog => {
-      if (blog.id === id) {
-        updatedBlog = { ...blog, ...updates, updatedAt: new Date() };
-        return updatedBlog;
-      }
-      return blog;
-    }));
-    return updatedBlog;
+  /* ================================
+     FETCH ALL BLOGS (ADMIN)
+  ================================ */
+  const getAllBlogs = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("*, blog_content(*)")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return (data ?? []).map(mapBlog);
   }, []);
 
-  const deleteBlog = useCallback((id: string) => {
-    const exists = blogs.some(blog => blog.id === id);
-    if (exists) {
-      setBlogs(prev => prev.filter(blog => blog.id !== id));
-      return true;
+  /* ================================
+     FETCH BLOG BY SLUG
+  ================================ */
+  const getBlogBySlug = useCallback(async (slug: string) => {
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("*, blog_content(*)")
+      .eq("slug", slug)
+      .single();
+
+    if (error) return null;
+    return mapBlog(data);
+  }, []);
+
+  /* ================================
+     FETCH BLOG BY ID
+  ================================ */
+  const getBlogById = useCallback(async (id: string) => {
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("*, blog_content(*)")
+      .eq("id", id)
+      .single();
+
+    if (error) return null;
+    return mapBlog(data);
+  }, []);
+
+  /* ================================
+     CREATE BLOG
+  ================================ */
+  const createBlog = useCallback(async (blog: BlogPost) => {
+    const { data: created, error } = await supabase
+      .from("blogs")
+      .insert({
+        title: blog.title,
+        slug: blog.slug,
+        description: blog.description,
+        cover_image: blog.coverImage,
+        published: blog.published,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    if (blog.content?.length) {
+      const blocks = blog.content.map((b, i) => ({
+        blog_id: created.id,
+        type: b.type,
+        content: b.content,
+        alt: b.alt || null,
+        position: i,
+      }));
+
+      const { error: blockError } = await supabase
+        .from("blog_content")
+        .insert(blocks);
+
+      if (blockError) throw blockError;
     }
-    return false;
-  }, [blogs]);
 
-  const togglePublish = useCallback((id: string) => {
-    let updatedBlog: BlogPost | undefined;
-    setBlogs(prev => prev.map(blog => {
-      if (blog.id === id) {
-        updatedBlog = { ...blog, published: !blog.published, updatedAt: new Date() };
-        return updatedBlog;
+    return mapBlog({ ...created, blog_content: [] });
+  }, []);
+
+  /* ================================
+     UPDATE BLOG
+  ================================ */
+  const updateBlog = useCallback(
+    async (id: string, blog: Partial<BlogPost>) => {
+      const { error } = await supabase
+        .from("blogs")
+        .update({
+          title: blog.title,
+          slug: blog.slug,
+          description: blog.description,
+          cover_image: blog.coverImage,
+          published: blog.published,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      if (blog.content) {
+        await supabase.from("blog_content").delete().eq("blog_id", id);
+
+        const blocks = blog.content.map((b, i) => ({
+          blog_id: id,
+          type: b.type,
+          content: b.content,
+          alt: b.alt || null,
+          position: i,
+        }));
+
+        const { error: blockError } = await supabase
+          .from("blog_content")
+          .insert(blocks);
+
+        if (blockError) throw blockError;
       }
-      return blog;
-    }));
-    return updatedBlog;
+    },
+    []
+  );
+
+  /* ================================
+     DELETE BLOG
+  ================================ */
+  const deleteBlog = useCallback(async (id: string) => {
+    const { error } = await supabase.from("blogs").delete().eq("id", id);
+    if (error) throw error;
+  }, []);
+
+  /* ================================
+     TOGGLE PUBLISH
+  ================================ */
+  const togglePublish = useCallback(async (id: string, value: boolean) => {
+    const { error } = await supabase
+      .from("blogs")
+      .update({
+        published: value,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id);
+
+    if (error) throw error;
   }, []);
 
   return (
-    <BlogContext.Provider value={{
-      blogs,
-      getPublishedBlogs,
-      getAllBlogs,
-      getBlogBySlug,
-      getBlogById,
-      createBlog,
-      updateBlog,
-      deleteBlog,
-      togglePublish
-    }}>
+    <BlogContext.Provider
+      value={{
+        getPublishedBlogs,
+        getAllBlogs,
+        getBlogBySlug,
+        getBlogById,
+        createBlog,
+        updateBlog,
+        deleteBlog,
+        togglePublish,
+      }}
+    >
       {children}
     </BlogContext.Provider>
   );
 }
 
+/* ================================
+   HOOK
+================================ */
+
 export function useBlog() {
   const context = useContext(BlogContext);
-  if (context === undefined) {
-    throw new Error('useBlog must be used within a BlogProvider');
+  if (!context) {
+    throw new Error("useBlog must be used inside BlogProvider");
   }
   return context;
 }
